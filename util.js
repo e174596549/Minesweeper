@@ -69,6 +69,15 @@ var addClassAll = function(className, addName) {
     }
 }
 
+function removeChildAll(idName) {
+    let selector = '#' + idName
+    let elements = document.querySelector(selector)
+    for (let i = 0; i < elements.childNodes.length; i++) {
+        var e = elements.childNodes[i]
+        elements.removeChild(e)
+    }
+}
+
 // find 函数可以查找 element 的所有子元素
 var find = function(element, selector) {
     return element.querySelector(selector)

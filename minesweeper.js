@@ -1,3 +1,7 @@
+var mineApp = {
+
+}
+
 var random01 = function() {
     /*
     随机生成0/1
@@ -110,15 +114,60 @@ var markedSquare = function(array) {
     return arr
 }
 
+function makeRandomLine(buttonId) {
+    console.log('makeRandomLine', `buttonId = ${buttonId}`);
+    switch (buttonId) {
+        case "id-button-primary":
+            var arr = randomLine(7, 5)
+            break;
+        case "id-button-middle":
+            var arr = randomLine(9, 7)
+            break;
+        case "id-button-high":
+            var arr = randomLine(15, 9)
+            break;
+        default:
+            console.log('makeRandomLine false');
+            var arr = []
+    }
+    mineApp.randomLineArr = arr
+    return markedSquare(arr)
+}
+
+function chessBoardTemplate(arr) {
+    var t = ''
+    for (var i = 0; i < arr.length; i++) {
+        t += `
+        <tr class="covered">`
+        for (var j = 0; j < arr[i].length; j++) {
+            console.log('chessBoardTemplate', arr[i][j])
+            t += `
+            <td class="mine">${arr[i][j]}</td>`
+        }
+        t += `
+        </tr>`
+    }
+    console.log('chessBoardTemplate', t);
+    return t
+}
+
+function buildLayout(t) {
+    let container = e('#id-draw-table')
+    removeChildAll('id-draw-table')
+    appendHtml(container, t)
+}
+
 function generateLayout() {
     let buttonList = eAll('.button')
     for (var i = 0; i < buttonList.length; i++) {
         let button = buttonList[i]
         bindEvent(button, 'click', () => {
-            console.log(button);
+            let arr = makeRandomLine(button.id)
+            console.log('generateLayout', arr);
+            let t = chessBoardTemplate(arr)
+            buildLayout(t)
         })
     }
-    draw()
 }
 
 function draw() {
