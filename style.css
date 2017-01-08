@@ -8,11 +8,20 @@ td {
 
 .button-list {}
 
-.mine {
+.mine9 {
     background-image: url(noun_628500.png);
+    background-size: 100% auto;
+}
+
+.mineMayBe {
+    background-image: url(noun_628505.png);
     background-size: 100% auto;
 }
 
 .covered {
     background-color: grey;
+}
+
+.uncovered {
+    background-color: #EEEEEE;
 }
