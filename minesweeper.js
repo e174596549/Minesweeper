@@ -2,6 +2,25 @@ var mineApp = function() {
     this.randomLineArr = []
     this.clicked = []
     this.step = 0
+    this.marked = []
+    this.wholeMine = 0
+        //地雷id数组
+    this.mineMap = []
+}
+
+var isClear = function() {
+    if (gVar === undefined) {
+        console.log('gVar is undefined');
+        return false
+    }
+    for (var i = 0; i < gVar.marked.length; i++) {
+        if (!gVar.mineMap.includes(gVar.marked[i])) {
+            console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+            return false
+        }
+    }
+    return true
+
 }
 
 function boom(element) {
@@ -10,6 +29,9 @@ function boom(element) {
     if (!element.classList.contains('uncovered')) {
         element.classList.add('uncovered')
     }
+    alert('boom')
+    removeClassAll('covered')
+    addClassAll('m9', 'mine9')
 }
 
 function commonBoom(element) {
@@ -48,8 +70,18 @@ function showAround(element) {
 function rightClick() {
     function myRightClick() {
         log("右击成功！")
-        console.log(this.classList);
+        console.log(this.classList)
         toggleClass(this, 'mineMayBe')
+        console.log(this.id);
+        gVar.marked.push(this.id)
+        console.log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
+        if (gVar.wholeMine == gVar.marked.length && gVar.wholeMine != 0) {
+            if (isClear()) {
+                alert('mines all clear')
+            } else {
+                alert('boom!!!!!!!!!')
+            }
+        }
         return false
     }
     let mines = eAll(".mine")
@@ -215,12 +247,15 @@ function makeRandomLine(buttonId) {
     switch (buttonId) {
         case "id-button-primary":
             var arr = randomLine(7, 5, 5)
+            gVar.wholeMine = 5
             break;
         case "id-button-middle":
             var arr = randomLine(9, 7, 10)
+            gVar.wholeMine = 10
             break;
         case "id-button-high":
             var arr = randomLine(15, 9, 20)
+            gVar.wholeMine = 20
             break;
         default:
             console.log('makeRandomLine false');
@@ -240,7 +275,7 @@ function chessBoardTemplate(arr) {
             let location = j.toString() + i.toString()
             let locationInt = Number(location)
             t += `
-            <td id=${j}${i} class="mine" data-locationX=${j} data-locationY=${i} data-value=${arr[i][j]}></td>`
+            <td id=${j}${i} class="mine m${arr[i][j]}" data-locationX=${j} data-locationY=${i} data-value=${arr[i][j]}></td>`
         }
         t += `
         </tr>`
@@ -266,6 +301,7 @@ function generateLayout() {
             buildLayout(t)
             check()
             rightClick()
+            setTimeout(init, 1000)
         })
     }
 }
@@ -297,12 +333,20 @@ function draw() {
     context.strokeRect(240, 120, 100, 100)
 }
 
+function init() {
+    let mines = eAll('.m9')
+    console.log(mines);
+    for (var i = 0; i < mines.length; i++) {
+        gVar.mineMap.push(mines[i].id)
+    }
+    console.log('gVar.mineMap = ', gVar.mineMap)
+}
+
 function __main() {
     // let arr = randomLine(10, 7)
     // console.log(arr);
     // console.log(markedSquare(arr));
     gVar = new mineApp()
-    console.log('gVar= ', gVar);
     generateLayout()
 }
 
