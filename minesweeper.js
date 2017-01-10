@@ -1,47 +1,52 @@
+//定义唯一全局变量入口
 var mineApp = function() {
-    this.randomLineArr = []
-    this.clicked = []
-    this.step = 0
-    this.marked = []
-    this.wholeMine = 0
-        //地雷id数组
-    this.mineMap = []
-}
-
-var isClear = function() {
-    if (gVar === undefined) {
-        console.log('gVar is undefined');
-        return false
+        this.randomLineArr = []
+            //已点击位置的坐标数组
+        this.clicked = []
+            //已进行操作次数
+        this.step = 0
+            //标记为雷的位置数组
+        this.marked = []
+            //需要排除地雷的总数
+        this.wholeMine = 0
+            //地雷id数组
+        this.mineMap = []
     }
-    for (var i = 0; i < gVar.marked.length; i++) {
-        if (!gVar.mineMap.includes(gVar.marked[i])) {
-            console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+    //判断是否排除所有地雷
+var isClear = function() {
+        if (gVar === undefined) {
+            console.log('gVar is undefined');
             return false
         }
+        for (var i = 0; i < gVar.marked.length; i++) {
+            if (!gVar.mineMap.includes(gVar.marked[i])) {
+                console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+                return false
+            }
+        }
+        return true
+
     }
-    return true
-
-}
-
+    //踩中地雷效果
 function boom(element) {
     console.log('boom');
     toggleClass(element, 'mine9')
     if (!element.classList.contains('uncovered')) {
         element.classList.add('uncovered')
     }
-    alert('boom')
     removeClassAll('covered')
     addClassAll('m9', 'mine9')
 }
-
+//未踩中雷效果
 function commonBoom(element) {
+    console.log('commonBoom');
     element.innerHTML = element.dataset.value
     if (!element.classList.contains('uncovered')) {
         element.classList.add('uncovered')
     }
     //gVar.clicked.push(element.id)
 }
-
+//如果点击出周围地雷数为0则点亮周围
 function showAround(element) {
     let x = element.dataset.locationx
     let y = element.dataset.locationy
@@ -63,23 +68,36 @@ function showAround(element) {
         }
     }
 }
-
-
-
-
+//右击标记为雷操作
 function rightClick() {
     function myRightClick() {
         log("右击成功！")
         console.log(this.classList)
-        toggleClass(this, 'mineMayBe')
-        console.log(this.id);
-        gVar.marked.push(this.id)
-        console.log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
-        if (gVar.wholeMine == gVar.marked.length && gVar.wholeMine != 0) {
-            if (isClear()) {
-                alert('mines all clear')
-            } else {
-                alert('boom!!!!!!!!!')
+        if (this.classList.contains('mineMayBe')) {
+            toggleClass(this, 'mineMayBe')
+            for (let i = 0; i < gVar.marked.length; i++) {
+                if (gVar.marked[i] === this.id) {
+                    let temp1 = gVar.marked.slice(0, i)
+                    let temp2 = gVar.marked.slice(i + 1)
+                    gVar.marked = temp1.concat(temp2)
+                    console.log('rightClick gVar.marked = ', gVar.marked);
+                }
+            }
+        } else {
+            toggleClass(this, 'mineMayBe')
+            console.log(this.id);
+            gVar.marked.push(this.id)
+            console.log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
+            if (gVar.wholeMine == gVar.marked.length && gVar.wholeMine != 0) {
+                if (isClear()) {
+                    alert('mines all clear')
+                    removeClassAll('covered')
+                    addClassAll('m9', 'mine9')
+                } else {
+                    alert('boom!!!!!!!!!')
+                    removeClassAll('covered')
+                    addClassAll('m9', 'mine9')
+                }
             }
         }
         return false
@@ -89,8 +107,7 @@ function rightClick() {
         mines[i].oncontextmenu = myRightClick
     }
 }
-
-
+//左键单击操作
 function check() {
     console.log('check');
     bindAll('.mine', 'click', (event) => {
@@ -106,6 +123,7 @@ function check() {
             case '9':
                 console.log('check-boom');
                 boom(element)
+                alert('boom!!!!!!!!!')
                 break;
             case '0':
                 console.log('check-mineValue = 0');
@@ -114,8 +132,56 @@ function check() {
             default:
                 console.log('check-mineValue = 0 - 9');
                 commonBoom(element)
+                aroundIsChecked(element)
         }
     })
+}
+//如果左键点击后如果四周雷已被排空则点亮周围
+var aroundIsChecked = function(element) {
+    let x = element.dataset.locationx
+    let y = element.dataset.locationy
+    console.log('aroundIsChecked', `x=${x} y=${y}`);
+    let aroundMarkedMines = []
+    let aroundMines = []
+    let aroundIds = []
+    for (let i = (Number(y) - 1); i <= (Number(y) + 1); i++) {
+        for (let j = (Number(x) - 1); j <= (Number(x) + 1); j++) {
+            let tempElement = document.getElementById(`${j}${i}`)
+            if (tempElement) {
+                if (gVar.marked.includes(tempElement.id)) {
+                    aroundMarkedMines.push(tempElement.id)
+                }
+                if (gVar.mineMap.includes(tempElement.id)) {
+                    aroundMines.push(tempElement.id)
+                }
+                aroundIds.push(tempElement.id)
+            }
+            // if (tempElement) {
+            //     console.log('showAround', tempElement.id);
+            //     commonBoom(tempElement)
+            //     if (tempElement.dataset.value == 0) {
+            //         if (!gVar.clicked.includes(tempElement.id)) {
+            //             tempElement.click()
+            //         }
+            //         console.log('showAround', `tempElement.dataset.value = ${tempElement.dataset.value}`);
+            //     }
+            // }
+        }
+    }
+    console.log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines}`);
+    if (aroundMarkedMines.length === aroundMines.length && aroundMines.length !== 0) {
+        for (var i = 0; i < aroundMines.length; i++) {
+            if (!aroundMines.includes(aroundMarkedMines[i])) {
+                return
+            }
+        }
+
+        for (var i = 0; i < aroundIds.length; i++) {
+            if (!gVar.clicked.includes(aroundIds[i]) && !aroundMines.includes(aroundIds[i])) {
+                document.getElementById(aroundIds[i]).click()
+            }
+        }
+    }
 }
 
 var random01 = function(n) {
@@ -192,56 +258,56 @@ function randomLine(m, n, x) {
 }
 
 var markedSquare = function(array) {
-    //扫雷主逻辑
-    /*
-    array 是一个「包含了『只包含了 0 9 的 array』的 array」
-    返回一个标记过的 array
-    ** 注意, 使用一个新数组来存储结果, 不要直接修改老数组
+        //扫雷主逻辑
+        /*
+        array 是一个「包含了『只包含了 0 9 的 array』的 array」
+        返回一个标记过的 array
+        ** 注意, 使用一个新数组来存储结果, 不要直接修改老数组
 
-    范例如下, 这是 array
-    [
-        [0, 9, 0, 0],
-        [0, 0, 9, 0],
-        [9, 0, 9, 0],
-        [0, 9, 0, 0],
-    ]
+        范例如下, 这是 array
+        [
+            [0, 9, 0, 0],
+            [0, 0, 9, 0],
+            [9, 0, 9, 0],
+            [0, 9, 0, 0],
+        ]
 
-    这是标记后的结果
-    [
-        [1, 9, 2, 1],
-        [2, 4, 9, 2],
-        [9, 4, 9, 2],
-        [2, 9, 2, 1],
-    ]
+        这是标记后的结果
+        [
+            [1, 9, 2, 1],
+            [2, 4, 9, 2],
+            [9, 4, 9, 2],
+            [2, 9, 2, 1],
+        ]
 
-    规则是, 0 会被设置为四周 8 个元素中 9 的数量
-    */
-    var arr = array.slice(0)
-    for (var i = 0; i < array.length; i++) {
-        for (var j = 0; j < array[i].length; j++) {
-            if (array[i][j] === 0) {
-                // console.log('array[i][j] === 0', `i = ${i} j =${j}`);
-                var score = 0
-                for (var m = -1; m <= 1; m++) {
-                    for (var n = -1; n <= 1; n++) {
-                        if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
-                            continue
-                        } else {
-                            // console.log('array[i + m][j + n] = ', `${array[i + m][j + n]} ; i + m =${i+m} j + n = ${j+ n}`);
-                            if (array[i + m][j + n] === 9) {
-                                score++
+        规则是, 0 会被设置为四周 8 个元素中 9 的数量
+        */
+        var arr = array.slice(0)
+        for (var i = 0; i < array.length; i++) {
+            for (var j = 0; j < array[i].length; j++) {
+                if (array[i][j] === 0) {
+                    // console.log('array[i][j] === 0', `i = ${i} j =${j}`);
+                    var score = 0
+                    for (var m = -1; m <= 1; m++) {
+                        for (var n = -1; n <= 1; n++) {
+                            if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
+                                continue
+                            } else {
+                                // console.log('array[i + m][j + n] = ', `${array[i + m][j + n]} ; i + m =${i+m} j + n = ${j+ n}`);
+                                if (array[i + m][j + n] === 9) {
+                                    score++
+                                }
                             }
                         }
                     }
+                    arr[i][j] = score
+                        // console.log(arr);
                 }
-                arr[i][j] = score
-                    // console.log(arr);
             }
         }
+        return arr
     }
-    return arr
-}
-
+    //生成随机棋盘
 function makeRandomLine(buttonId) {
     console.log('makeRandomLine', `buttonId = ${buttonId}`);
     switch (buttonId) {
@@ -264,7 +330,7 @@ function makeRandomLine(buttonId) {
     gVar.randomLineArr = arr
     return markedSquare(arr)
 }
-
+//生成棋盘模板
 function chessBoardTemplate(arr) {
     var t = ''
     for (var i = 0; i < arr.length; i++) {
@@ -283,13 +349,13 @@ function chessBoardTemplate(arr) {
     //console.log('chessBoardTemplate', t);
     return t
 }
-
+//插入棋盘模板
 function buildLayout(t) {
     let container = e('#id-draw-table')
     removeChildAll('id-draw-table')
     appendHtml(container, t)
 }
-
+//按按钮生成棋盘逻辑
 function generateLayout() {
     let buttonList = eAll('.button')
     for (var i = 0; i < buttonList.length; i++) {
@@ -305,7 +371,7 @@ function generateLayout() {
         })
     }
 }
-
+//备用画板
 function draw() {
     console.log('draw');
     let canvas = e("#id-draw-table")
@@ -332,7 +398,7 @@ function draw() {
     context.fillRect(240, 0, 100, 100)
     context.strokeRect(240, 120, 100, 100)
 }
-
+//初始化地雷坐标数组
 function init() {
     let mines = eAll('.m9')
     console.log(mines);
