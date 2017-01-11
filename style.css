@@ -24,6 +24,11 @@ td {
     background-size: 100% auto;
 }
 
+.mineWrong {
+    background-image: url(noun_796287_cc.png);
+    background-size: 100% auto;
+}
+
 .covered {
     background-color: grey;
 }

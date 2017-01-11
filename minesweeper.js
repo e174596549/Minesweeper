@@ -36,6 +36,13 @@ function boom(element) {
     }
     removeClassAll('covered')
     addClassAll('m9', 'mine9')
+    for (var i = 0; i < gVar.marked.length; i++) {
+        if (!gVar.mineMap.includes(gVar.marked[i])) {
+            let tempElement = document.getElementById(gVar.marked[i])
+            console.log('boom tempElement = ', tempElement);
+            toggleClass(tempElement, 'mineWrong')
+        }
+    }
 }
 //未踩中雷效果
 function commonBoom(element) {
@@ -192,6 +199,21 @@ var aroundIsChecked = function(element) {
     }
     console.log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines} gVar.mineMap = ${gVar.mineMap}`);
     if (aroundMarkedMines.length === aroundMines.length && aroundMines.length !== 0) {
+        for (var i = 0; i < aroundMines.length; i++) {
+            if (!gVar.mineMap.includes(aroundMarkedMines[i])) {
+                alert('boom!!!!!')
+                removeClassAll('covered')
+                addClassAll('m9', 'mine9')
+                for (var i = 0; i < gVar.marked.length; i++) {
+                    if (!gVar.mineMap.includes(gVar.marked[i])) {
+                        let tempElement = document.getElementById(gVar.marked[i])
+                        console.log('boom tempElement = ', tempElement);
+                        toggleClass(tempElement, 'mineWrong')
+                    }
+                }
+            }
+        }
+
         for (var i = 0; i < aroundMines.length; i++) {
             if (!aroundMines.includes(aroundMarkedMines[i])) {
                 return
