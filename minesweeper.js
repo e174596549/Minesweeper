@@ -4,7 +4,7 @@ var mineApp = function() {
             //已点击位置的坐标数组
         this.clicked = []
             //已进行操作次数
-        this.step = 0
+        this.durationTime = 0
             //标记为雷的位置数组
         this.marked = []
             //需要排除地雷的总数
@@ -54,7 +54,18 @@ function showAround(element) {
     // console.log('showAround', `e("#55")=${e("55")}`);
     for (let i = (Number(y) - 1); i <= (Number(y) + 1); i++) {
         for (let j = (Number(x) - 1); j <= (Number(x) + 1); j++) {
-            let tempElement = document.getElementById(`${j}${i}`)
+            if (i < 10 && i > 0) {
+                var tempI = '0' + i.toString()
+            } else {
+                var tempI = i.toString()
+            }
+            if (j < 10 && i > 0) {
+                var tempJ = '0' + j.toString()
+            } else {
+                var tempJ = j.toString()
+            }
+            let tempElement = document.getElementById(tempI + tempJ)
+            console.log('tempElement = ', tempElement);
             if (tempElement) {
                 console.log('showAround', tempElement.id);
                 commonBoom(tempElement)
@@ -146,7 +157,18 @@ var aroundIsChecked = function(element) {
     let aroundIds = []
     for (let i = (Number(y) - 1); i <= (Number(y) + 1); i++) {
         for (let j = (Number(x) - 1); j <= (Number(x) + 1); j++) {
-            let tempElement = document.getElementById(`${j}${i}`)
+            if (i < 10 && i > 0) {
+                var tempI = '0' + i.toString()
+            } else {
+                var tempI = i.toString()
+            }
+            if (j < 10 && i > 0) {
+                var tempJ = '0' + j.toString()
+            } else {
+                var tempJ = j.toString()
+            }
+            let tempElement = document.getElementById(tempI + tempJ)
+            console.log('tempElement', tempElement);
             if (tempElement) {
                 if (gVar.marked.includes(tempElement.id)) {
                     aroundMarkedMines.push(tempElement.id)
@@ -168,7 +190,7 @@ var aroundIsChecked = function(element) {
             // }
         }
     }
-    console.log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines}`);
+    console.log('aroundIsChecked', `aroundIds = ${aroundIds} aroundMarkedMines = ${aroundMarkedMines} aroundMines = ${aroundMines} gVar.mineMap = ${gVar.mineMap}`);
     if (aroundMarkedMines.length === aroundMines.length && aroundMines.length !== 0) {
         for (var i = 0; i < aroundMines.length; i++) {
             if (!aroundMines.includes(aroundMarkedMines[i])) {
@@ -312,16 +334,16 @@ function makeRandomLine(buttonId) {
     console.log('makeRandomLine', `buttonId = ${buttonId}`);
     switch (buttonId) {
         case "id-button-primary":
-            var arr = randomLine(7, 5, 5)
-            gVar.wholeMine = 5
-            break;
-        case "id-button-middle":
-            var arr = randomLine(9, 7, 10)
+            var arr = randomLine(8, 8, 10)
             gVar.wholeMine = 10
             break;
+        case "id-button-middle":
+            var arr = randomLine(16, 16, 48)
+            gVar.wholeMine = 48
+            break;
         case "id-button-high":
-            var arr = randomLine(15, 9, 20)
-            gVar.wholeMine = 20
+            var arr = randomLine(30, 16, 99)
+            gVar.wholeMine = 99
             break;
         default:
             console.log('makeRandomLine false');
@@ -338,10 +360,19 @@ function chessBoardTemplate(arr) {
         <tr class="covered">`
         for (var j = 0; j < arr[i].length; j++) {
             //console.log('chessBoardTemplate', arr[i][j])
-            let location = j.toString() + i.toString()
-            let locationInt = Number(location)
+            if (i < 10 && i > 0) {
+                var tempI = '0' + i.toString()
+            } else {
+                var tempI = i.toString()
+            }
+            if (j < 10 && i > 0) {
+                var tempJ = '0' + j.toString()
+            } else {
+                var tempJ = j.toString()
+            }
+            //let locationInt = Number(location)
             t += `
-            <td id=${j}${i} class="mine m${arr[i][j]}" data-locationX=${j} data-locationY=${i} data-value=${arr[i][j]}></td>`
+            <td id=${tempI}${tempJ} class="mine m${arr[i][j]}" data-locationX=${tempJ} data-locationY=${tempI} data-value=${arr[i][j]}></td>`
         }
         t += `
         </tr>`
@@ -361,6 +392,8 @@ function generateLayout() {
     for (var i = 0; i < buttonList.length; i++) {
         let button = buttonList[i]
         bindEvent(button, 'click', () => {
+            delete gVar
+            gVar = new mineApp()
             let arr = makeRandomLine(button.id)
             console.log('generateLayout', arr);
             let t = chessBoardTemplate(arr)
@@ -406,13 +439,10 @@ function init() {
         gVar.mineMap.push(mines[i].id)
     }
     console.log('gVar.mineMap = ', gVar.mineMap)
+    alert('可以开始了！！！！')
 }
 
 function __main() {
-    // let arr = randomLine(10, 7)
-    // console.log(arr);
-    // console.log(markedSquare(arr));
-    gVar = new mineApp()
     generateLayout()
 }
 
