@@ -3,14 +3,22 @@ var mineApp = function() {
         this.randomLineArr = []
             //已点击位置的坐标数组
         this.clicked = []
-            //已进行操作次数
-        this.durationTime = 0
+            //游戏时间
+        this.startTime = 0
+        this.finishTime = 0
             //标记为雷的位置数组
         this.marked = []
             //需要排除地雷的总数
         this.wholeMine = 0
             //地雷id数组
         this.mineMap = []
+            //更新剩余地雷书的元素
+        this.unfindMinesNumber = e('#unFind-mines-number')
+    }
+    //更新剩余地雷数
+var upDateUnfindMinesNumber = function() {
+        console.log("upDateUnfindMinesNumber", `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+        gVar.unfindMinesNumber.innerHTML = `剩余雷数：${gVar.mineMap.length - gVar.marked.length}个`
     }
     //判断是否排除所有地雷
 var isClear = function() {
@@ -25,7 +33,6 @@ var isClear = function() {
             }
         }
         return true
-
     }
     //踩中地雷效果
 function boom(element) {
@@ -91,6 +98,9 @@ function rightClick() {
     function myRightClick() {
         log("右击成功！")
         console.log(this.classList)
+        if (this.classList.contains('uncovered')) {
+            return
+        }
         if (this.classList.contains('mineMayBe')) {
             toggleClass(this, 'mineMayBe')
             for (let i = 0; i < gVar.marked.length; i++) {
@@ -101,14 +111,18 @@ function rightClick() {
                     console.log('rightClick gVar.marked = ', gVar.marked);
                 }
             }
+            upDateUnfindMinesNumber()
         } else {
             toggleClass(this, 'mineMayBe')
             console.log(this.id);
             gVar.marked.push(this.id)
             console.log('rightClick', `gVar.marked = ${gVar.marked} gVar.wholeMine = ${gVar.wholeMine}`)
+            upDateUnfindMinesNumber()
             if (gVar.wholeMine == gVar.marked.length && gVar.wholeMine != 0) {
                 if (isClear()) {
-                    alert('mines all clear')
+                    let myDate = new Date();
+                    gVar.finishTime = myDate.getTime()
+                    alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
                     removeClassAll('covered')
                     addClassAll('m9', 'mine9')
                 } else {
@@ -414,8 +428,12 @@ function generateLayout() {
     for (var i = 0; i < buttonList.length; i++) {
         let button = buttonList[i]
         bindEvent(button, 'click', () => {
+            //e('body').classList.add('modal-mask')
             delete gVar
             gVar = new mineApp()
+            let myDate = new Date();
+            gVar.startTime = myDate.getTime()
+            console.log('gVar.startTime = ', gVar.startTime);
             let arr = makeRandomLine(button.id)
             console.log('generateLayout', arr);
             let t = chessBoardTemplate(arr)
@@ -461,7 +479,8 @@ function init() {
         gVar.mineMap.push(mines[i].id)
     }
     console.log('gVar.mineMap = ', gVar.mineMap)
-    alert('可以开始了！！！！')
+    upDateUnfindMinesNumber()
+        //alert('可以开始了！！！！')
 }
 
 function __main() {
