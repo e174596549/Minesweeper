@@ -1,6 +1,6 @@
 # Minesweeper
 
-![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/mines.png)
+![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/mines2.png)
 
 ## 1.2 新增
 
