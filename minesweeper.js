@@ -36,6 +36,7 @@ var isClear = function() {
     }
     //踩中地雷效果
 function boom(element) {
+    e('#unFind-mines-number').classList.add('hide')
     console.log('boom');
     toggleClass(element, 'mine9')
     if (!element.classList.contains('uncovered')) {
@@ -43,13 +44,40 @@ function boom(element) {
     }
     removeClassAll('covered')
     addClassAll('m9', 'mine9')
+    console.log(`gVar.marked = ${gVar.marked} gVar.mineMap = ${gVar.mineMap}`);
+    let rightMarked = 0
     for (var i = 0; i < gVar.marked.length; i++) {
         if (!gVar.mineMap.includes(gVar.marked[i])) {
             let tempElement = document.getElementById(gVar.marked[i])
             console.log('boom tempElement = ', tempElement);
             toggleClass(tempElement, 'mineWrong')
+        } else {
+            rightMarked++
         }
     }
+    gVar.unfindMinesNumber.innerHTML = `剩余雷数：${gVar.mineMap.length - rightMarked}个`
+    var myDate = new Date();
+    gVar.finishTime = myDate.getTime()
+    GuaActions(`BOOM !!!!
+        time : ${(gVar.finishTime - gVar.startTime)/1000}s
+        剩余雷数：${gVar.mineMap.length - rightMarked}个`, ['初级', '中级', '高级'], (x) => {
+        console.log(`x = ${x}`);
+        switch (x) {
+            case '0':
+                let button = e('#id-button-primary')
+                console.log('button = ', button)
+                button.click()
+                break;
+            case '1':
+                e('#id-button-middle').click()
+                break;
+            case '2':
+                e('#id-button-high').click()
+                break;
+            default:
+        }
+        console.log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
+    })
 }
 //未踩中雷效果
 function commonBoom(element) {
@@ -122,13 +150,33 @@ function rightClick() {
                 if (isClear()) {
                     let myDate = new Date();
                     gVar.finishTime = myDate.getTime()
-                    alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
+                        //alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
+                    GuaActions(`mines all clear !!!!
+                        time : ${(gVar.finishTime - gVar.startTime)/1000}s`, ['初级', '中级', '高级'], (x) => {
+                        console.log(`x = ${x}`);
+                        switch (x) {
+                            case '0':
+                                let button = e('#id-button-primary')
+                                console.log('button = ', button)
+                                button.click()
+                                break;
+                            case '1':
+                                e('#id-button-middle').click()
+                                break;
+                            case '2':
+                                e('#id-button-high').click()
+                                break;
+                            default:
+                        }
+                        console.log(`time : ${(gVar.finishTime - gVar.startTime)/1000}s`);
+                    })
                     removeClassAll('covered')
                     addClassAll('m9', 'mine9')
                 } else {
-                    alert('boom!!!!!!!!!')
-                    removeClassAll('covered')
-                    addClassAll('m9', 'mine9')
+                    boom(this)
+                        // alert('boom!!!!!!!!!')
+                        // removeClassAll('covered')
+                        // addClassAll('m9', 'mine9')
                 }
             }
         }
@@ -155,7 +203,7 @@ function check() {
             case '9':
                 console.log('check-boom');
                 boom(element)
-                alert('boom!!!!!!!!!')
+                    //alert('boom!!!!!!!!!')
                 break;
             case '0':
                 console.log('check-mineValue = 0');
@@ -215,16 +263,18 @@ var aroundIsChecked = function(element) {
     if (aroundMarkedMines.length === aroundMines.length && aroundMines.length !== 0) {
         for (var i = 0; i < aroundMines.length; i++) {
             if (!gVar.mineMap.includes(aroundMarkedMines[i])) {
-                alert('boom!!!!!')
-                removeClassAll('covered')
-                addClassAll('m9', 'mine9')
-                for (var i = 0; i < gVar.marked.length; i++) {
-                    if (!gVar.mineMap.includes(gVar.marked[i])) {
-                        let tempElement = document.getElementById(gVar.marked[i])
-                        console.log('boom tempElement = ', tempElement);
-                        toggleClass(tempElement, 'mineWrong')
-                    }
-                }
+                boom(element)
+                element.classList.remove('mine9')
+                    // alert('boom!!!!!')
+                    // removeClassAll('covered')
+                    // addClassAll('m9', 'mine9')
+                    // for (var i = 0; i < gVar.marked.length; i++) {
+                    //     if (!gVar.mineMap.includes(gVar.marked[i])) {
+                    //         let tempElement = document.getElementById(gVar.marked[i])
+                    //         console.log('boom tempElement = ', tempElement);
+                    //         toggleClass(tempElement, 'mineWrong')
+                    //     }
+                    // }
             }
         }
 
@@ -424,7 +474,7 @@ function buildLayout(t) {
 }
 //按按钮生成棋盘逻辑
 function generateLayout() {
-    let buttonList = eAll('.button')
+    let buttonList = eAll('.level-button')
     for (var i = 0; i < buttonList.length; i++) {
         let button = buttonList[i]
         bindEvent(button, 'click', () => {
@@ -444,6 +494,119 @@ function generateLayout() {
         })
     }
 }
+
+//alert 样式
+var buttonTemplate = function(title, index) {
+    var t = `
+        <button class='modal-action-button'
+                data-index="${index}">${title}</button>
+    `
+    return t
+}
+
+var GuaActions = function(title, actions, callback) {
+    /*
+    title 是 string
+    actions 是一个包含 string 的数组
+    callback 是一个如下的函数
+    function(index) {
+        // index 是下标, 具体如下
+        // index 如果是 -1 表明用户点击了 cancel
+    }
+
+    这个函数生成一个弹窗页面
+    弹窗包含 title 作为标题
+    actions 里面的 string 作为标题生成按钮
+    弹窗还包含一个 Cancel 按钮
+    点击按钮的时候, 调用 callback(index)
+    */
+    var buttons = []
+    for (var i = 0; i < actions.length; i++) {
+        var a = actions[i]
+        buttons.push(buttonTemplate(a, i))
+    }
+    var actionButtons = buttons.join('')
+    var t = `
+    <div class='modal-container modal-remove'>
+        <div class='modal-mask'></div>
+        <div class="modal-alert vertical-center">
+            <div class="modal-title">
+                ${title}
+            </div>
+            <div class="modal-message">
+                ${actionButtons}
+            </div>
+            <div class='modal-control'>
+                <button class="modal-button modal-action-button" data-index="-1">Cancel</button>
+            </div>
+        </div>
+    </div>
+    `
+    appendHtml(e('body'), t)
+        // css
+    var css = `
+    <style class="modal-remove">
+        .modal-container {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+        }
+        .modal-mask {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0.5;
+        }
+        .modal-alert {
+            margin: 0 auto;
+            width: 200px;
+            opacity: 1;
+        }
+        .modal-title {
+            text-align: center;
+            font-size: 27px;
+            background: lightblue;
+        }
+        .modal-message {
+            padding: 10px 5px;
+            background: white;
+        }
+        .modal-input {
+            width: 100%;
+        }
+        .modal-control {
+            font-size: 0;
+        }
+        button {
+            width: 100%;
+        }
+        .modal-button {
+            height: 100%;
+            font-size: 18px;
+            border: 0;
+        }
+        .vertical-center {
+            top: 50%;
+            position: relative;
+            transform: translateY(-50%);
+        }
+    </style>
+    `
+    appendHtml(e('head'), css)
+        // event
+    bindAll('.modal-action-button', 'click', function(event) {
+        console.log('click button')
+        var index = event.target.dataset.index
+        callback(index)
+        removeAll('.modal-remove')
+    })
+}
+
 //备用画板
 function draw() {
     console.log('draw');
@@ -480,11 +643,33 @@ function init() {
     }
     console.log('gVar.mineMap = ', gVar.mineMap)
     upDateUnfindMinesNumber()
-        //alert('可以开始了！！！！')
+    let buttonList = eAll('.level-button')
+    for (var i = 0; i < buttonList.length; i++) {
+        if (!buttonList[i].classList.contains("hide")) {
+            buttonList[i].classList.add("hide")
+        }
+    }
+    let num = e('#unFind-mines-number')
+    if (num.classList.contains("hide")) {
+        num.classList.remove("hide")
+    }
+    let replay = e('#id-button-replay')
+    if (replay.classList.contains("hide")) {
+        replay.classList.remove("hide")
+    }
+    //alert('可以开始了！！！！')
+}
+
+var bindButtonReplay = function() {
+    let button = e('#id-button-replay')
+    bindEvent(button, 'click', () => {
+        location.replace(location.href)
+    })
 }
 
 function __main() {
     generateLayout()
+    bindButtonReplay()
 }
 
 __main()

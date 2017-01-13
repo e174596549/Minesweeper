@@ -51,6 +51,14 @@ var toggleClass = function(element, className) {
     }
 }
 
+var removeAll = function(sel) {
+    var tags = document.querySelectorAll(sel)
+    for (var i = 0; i < tags.length; i++) {
+        var tag = tags[i]
+        tag.remove()
+    }
+}
+
 var removeClassAll = function(className) {
     var selector = '.' + className
     var elements = document.querySelectorAll(selector)
