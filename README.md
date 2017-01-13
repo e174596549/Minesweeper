@@ -2,6 +2,11 @@
 
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/mines.png)
 
+## 1.1 新增
+
+1. 显示剩余地雷数量
+2. 显示完成游戏消耗的时间
+
 ## 1.0 版本功能
 
 1. 可随机生成三种难度的游戏
