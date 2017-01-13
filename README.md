@@ -1,5 +1,7 @@
 # Minesweeper
 
+![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/mines.png)
+
 ## 1.0 版本功能
 
 1. 可随机生成三种难度的游戏
