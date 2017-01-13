@@ -36,7 +36,6 @@ var isClear = function() {
     }
     //踩中地雷效果
 function boom(element) {
-    e('#unFind-mines-number').classList.add('hide')
     console.log('boom');
     toggleClass(element, 'mine9')
     if (!element.classList.contains('uncovered')) {
@@ -505,21 +504,22 @@ var buttonTemplate = function(title, index) {
 }
 
 var GuaActions = function(title, actions, callback) {
-    /*
-    title 是 string
-    actions 是一个包含 string 的数组
-    callback 是一个如下的函数
-    function(index) {
-        // index 是下标, 具体如下
-        // index 如果是 -1 表明用户点击了 cancel
-    }
+    e('#unFind-mines-number').classList.add('hide')
+        /*
+        title 是 string
+        actions 是一个包含 string 的数组
+        callback 是一个如下的函数
+        function(index) {
+            // index 是下标, 具体如下
+            // index 如果是 -1 表明用户点击了 cancel
+        }
 
-    这个函数生成一个弹窗页面
-    弹窗包含 title 作为标题
-    actions 里面的 string 作为标题生成按钮
-    弹窗还包含一个 Cancel 按钮
-    点击按钮的时候, 调用 callback(index)
-    */
+        这个函数生成一个弹窗页面
+        弹窗包含 title 作为标题
+        actions 里面的 string 作为标题生成按钮
+        弹窗还包含一个 Cancel 按钮
+        点击按钮的时候, 调用 callback(index)
+        */
     var buttons = []
     for (var i = 0; i < actions.length; i++) {
         var a = actions[i]
