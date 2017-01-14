@@ -184,7 +184,7 @@ function rightClick() {
     let mines = eAll(".mine")
     for (var i = 0; i < mines.length; i++) {
         mines[i].oncontextmenu = myRightClick
-        mines[i].addEventListener('touchstart touchend', myRightClick)
+            //mines[i].bind('contextmenu', myRightClick)
     }
 }
 //左键单击操作
