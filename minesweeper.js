@@ -670,9 +670,9 @@ var bindButtonReplay = function() {
     })
 }
 
-window.ontouchstart = function(e) {
-    e.preventDefault();
-}
+// window.ontouchstart = function(e) {
+//     e.preventDefault();
+// }
 
 function __main() {
     generateLayout()
