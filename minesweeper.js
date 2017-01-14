@@ -674,6 +674,10 @@ var bindButtonReplay = function() {
 //     e.preventDefault();
 // }
 
+window.document.oncontextmenu = function() {
+    return false;
+}
+
 function __main() {
     generateLayout()
     bindButtonReplay()
