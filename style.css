@@ -40,3 +40,7 @@ td {
 .hide {
     display: none;
 }
+
+.background-image {
+    text-align: center;
+}

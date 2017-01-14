@@ -184,6 +184,7 @@ function rightClick() {
     let mines = eAll(".mine")
     for (var i = 0; i < mines.length; i++) {
         mines[i].oncontextmenu = myRightClick
+        mines[i].addEventListener('touchstart touchend', myRightClick)
     }
 }
 //左键单击操作
@@ -478,6 +479,8 @@ function generateLayout() {
         let button = buttonList[i]
         bindEvent(button, 'click', () => {
             //e('body').classList.add('modal-mask')
+            let img = e('.background-image')
+            img.classList.add('hide')
             delete gVar
             gVar = new mineApp()
             let myDate = new Date();

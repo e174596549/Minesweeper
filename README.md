@@ -2,6 +2,11 @@
 
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/mines2.png)
 
+## 1.3
+
+1. 增加手机适配
+2. 增加背景图片
+
 ## 1.2 新增
 
 1. 增加游戏完成和失败时的alert功能
