@@ -44,3 +44,8 @@ td {
 .background-image {
     text-align: center;
 }
+
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}
