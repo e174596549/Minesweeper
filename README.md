@@ -1,6 +1,6 @@
 # Minesweeper
 
-![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/Minesweeper.gif)
+![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/img/Minesweeper.gif)
 
 ## 1.3
 
