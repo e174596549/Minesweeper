@@ -152,11 +152,12 @@ function rightClick() {
                     let myDate = new Date();
                     gVar.finishTime = myDate.getTime()
                     //alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
-                    let bestScore = showMaxScore()
-                    let time = (gVar.finishTime - gVar.startTime) / 1000
+
+                    let time = (gVar.finishTime - gVar.startTime)
+                    let bestScore = showMaxScore(time)
                     GuaActions(`mines all clear !!!!
-                        bestscore : ${bestScore}
-                        time : ${time}s`, ['初级', '中级', '高级'], (x) => {
+                        bestscore : ${bestScore / 1000}
+                        thistime : ${time / 1000}s`, ['初级', '中级', '高级'], (x) => {
                         console.log(`x = ${x}`);
                         switch (x) {
                             case '0':
@@ -680,27 +681,42 @@ var bindButtonReplay = function() {
 
 //显示最短用时
 var showMaxScore = function(score) {
+    let bestScore = getBestScore()
+    console.log('showMaxScore score = ', score);
+    console.log('showMaxScore bestScore = ', bestScore);
     switch (gVar.level) {
         case 0:
-            if (true) {
-                let bestScore = getBestScore(0)
-                return score > bestScore ? bestScore : score
+            console.log('case 0');
+            if (Number(bestScore[0]) > Number(score)) {
+                console.log('bestScore[0] > score');
+                bestScore[0] = score
+                save(bestScore)
             }
+            return bestScore[0]
             break;
         case 1:
-
+            if (Number(bestScore[1]) > Number(score)) {
+                console.log('bestScore[0] > score');
+                bestScore[1] = score
+                save(bestScore)
+            }
+            return bestScore[1]
             break;
         case 2:
-
+            if (Number(bestScore[2]) > Number(score)) {
+                console.log('bestScore[0] > score');
+                bestScore[2] = score
+                save(bestScore)
+            }
+            return bestScore[2]
             break;
         default:
             console.log('showMaxScore error');
     }
 }
 
-var getBestScore = function(level) {
-    var time = load()[level]
-    console.log(time)
+var getBestScore = function() {
+    var time = load()
     return time
 }
 
@@ -712,13 +728,16 @@ var save = function(array) {
 
 // 定义一个函数， 读取 localStorage 中的数据并解析返回
 var load = function() {
+    if (localStorage.bestScore == undefined) {
+        save([1111111111111, 1111111111111, 11111111111111])
+    }
+    console.log('localStorage.bestScore:', localStorage.bestScore)
     var s = localStorage.bestScore
     return JSON.parse(s)
+    // window.ontouchstart = function(e) {
+    //     e.preventDefault();
+    // }
 }
-// window.ontouchstart = function(e) {
-//     e.preventDefault();
-// }
-
 window.document.oncontextmenu = function() {
     return false;
 }
