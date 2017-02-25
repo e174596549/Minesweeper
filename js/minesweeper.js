@@ -1,40 +1,42 @@
 //定义唯一全局变量入口
 var mineApp = function() {
-        this.randomLineArr = []
-            //已点击位置的坐标数组
-        this.clicked = []
-            //游戏时间
-        this.startTime = 0
-        this.finishTime = 0
-            //标记为雷的位置数组
-        this.marked = []
-            //需要排除地雷的总数
-        this.wholeMine = 0
-            //地雷id数组
-        this.mineMap = []
-            //更新剩余地雷书的元素
-        this.unfindMinesNumber = e('#unFind-mines-number')
-    }
-    //更新剩余地雷数
+    this.randomLineArr = []
+    //已点击位置的坐标数组
+    this.clicked = []
+    //游戏时间
+    this.startTime = 0
+    this.finishTime = 0
+    //标记为雷的位置数组
+    this.marked = []
+    //需要排除地雷的总数
+    this.wholeMine = 0
+    //地雷id数组
+    this.mineMap = []
+    //更新剩余地雷书的元素
+    this.unfindMinesNumber = e('#unFind-mines-number')
+    //当前游戏难度
+    this.level
+}
+//更新剩余地雷数
 var upDateUnfindMinesNumber = function() {
-        console.log("upDateUnfindMinesNumber", `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
-        gVar.unfindMinesNumber.innerHTML = `剩余雷数：${gVar.mineMap.length - gVar.marked.length}个`
-    }
-    //判断是否排除所有地雷
+    console.log("upDateUnfindMinesNumber", `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
+    gVar.unfindMinesNumber.innerHTML = `剩余雷数：${gVar.mineMap.length - gVar.marked.length}个`
+}
+//判断是否排除所有地雷
 var isClear = function() {
-        if (gVar === undefined) {
-            console.log('gVar is undefined');
+    if (gVar === undefined) {
+        console.log('gVar is undefined');
+        return false
+    }
+    for (var i = 0; i < gVar.marked.length; i++) {
+        if (!gVar.mineMap.includes(gVar.marked[i])) {
+            console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
             return false
         }
-        for (var i = 0; i < gVar.marked.length; i++) {
-            if (!gVar.mineMap.includes(gVar.marked[i])) {
-                console.log('isClear', `gVar.mineMap = ${gVar.mineMap} gVar.marked = ${gVar.marked}`);
-                return false
-            }
-        }
-        return true
     }
-    //踩中地雷效果
+    return true
+}
+//踩中地雷效果
 function boom(element) {
     console.log('boom');
     toggleClass(element, 'mine9')
@@ -149,9 +151,12 @@ function rightClick() {
                 if (isClear()) {
                     let myDate = new Date();
                     gVar.finishTime = myDate.getTime()
-                        //alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
+                    //alert(`mines all clear !!!! time : ${(gVar.finishTime - gVar.startTime)/1000}s`)
+                    let bestScore = showMaxScore()
+                    let time = (gVar.finishTime - gVar.startTime) / 1000
                     GuaActions(`mines all clear !!!!
-                        time : ${(gVar.finishTime - gVar.startTime)/1000}s`, ['初级', '中级', '高级'], (x) => {
+                        bestscore : ${bestScore}
+                        time : ${time}s`, ['初级', '中级', '高级'], (x) => {
                         console.log(`x = ${x}`);
                         switch (x) {
                             case '0':
@@ -173,9 +178,9 @@ function rightClick() {
                     addClassAll('m9', 'mine9')
                 } else {
                     boom(this)
-                        // alert('boom!!!!!!!!!')
-                        // removeClassAll('covered')
-                        // addClassAll('m9', 'mine9')
+                    // alert('boom!!!!!!!!!')
+                    // removeClassAll('covered')
+                    // addClassAll('m9', 'mine9')
                 }
             }
         }
@@ -184,7 +189,7 @@ function rightClick() {
     let mines = eAll(".mine")
     for (var i = 0; i < mines.length; i++) {
         mines[i].oncontextmenu = myRightClick
-            //mines[i].bind('contextmenu', myRightClick)
+        //mines[i].bind('contextmenu', myRightClick)
     }
 }
 //左键单击操作
@@ -203,7 +208,7 @@ function check() {
             case '9':
                 console.log('check-boom');
                 boom(element)
-                    //alert('boom!!!!!!!!!')
+                //alert('boom!!!!!!!!!')
                 break;
             case '0':
                 console.log('check-mineValue = 0');
@@ -265,16 +270,16 @@ var aroundIsChecked = function(element) {
             if (!gVar.mineMap.includes(aroundMarkedMines[i])) {
                 boom(element)
                 element.classList.remove('mine9')
-                    // alert('boom!!!!!')
-                    // removeClassAll('covered')
-                    // addClassAll('m9', 'mine9')
-                    // for (var i = 0; i < gVar.marked.length; i++) {
-                    //     if (!gVar.mineMap.includes(gVar.marked[i])) {
-                    //         let tempElement = document.getElementById(gVar.marked[i])
-                    //         console.log('boom tempElement = ', tempElement);
-                    //         toggleClass(tempElement, 'mineWrong')
-                    //     }
-                    // }
+                // alert('boom!!!!!')
+                // removeClassAll('covered')
+                // addClassAll('m9', 'mine9')
+                // for (var i = 0; i < gVar.marked.length; i++) {
+                //     if (!gVar.mineMap.includes(gVar.marked[i])) {
+                //         let tempElement = document.getElementById(gVar.marked[i])
+                //         console.log('boom tempElement = ', tempElement);
+                //         toggleClass(tempElement, 'mineWrong')
+                //     }
+                // }
             }
         }
 
@@ -303,11 +308,11 @@ var random01 = function(n) {
     */
     // r 是一个 0 - 1 的小数
     var r = Math.random()
-        // * 100000, 现在是 0 - 100000 的小数了
+    // * 100000, 现在是 0 - 100000 的小数了
     r *= 100000
-        // 取整, 现在是 0 - 100000 的整数了
+    // 取整, 现在是 0 - 100000 的整数了
     r = Math.floor(r)
-        // 用余数来取随机 0-n
+    // 用余数来取随机 0-n
     return r % n
 }
 
@@ -366,70 +371,73 @@ function randomLine(m, n, x) {
 }
 
 var markedSquare = function(array) {
-        //扫雷主逻辑
-        /*
-        array 是一个「包含了『只包含了 0 9 的 array』的 array」
-        返回一个标记过的 array
-        ** 注意, 使用一个新数组来存储结果, 不要直接修改老数组
+    //扫雷主逻辑
+    /*
+    array 是一个「包含了『只包含了 0 9 的 array』的 array」
+    返回一个标记过的 array
+    ** 注意, 使用一个新数组来存储结果, 不要直接修改老数组
 
-        范例如下, 这是 array
-        [
-            [0, 9, 0, 0],
-            [0, 0, 9, 0],
-            [9, 0, 9, 0],
-            [0, 9, 0, 0],
-        ]
+    范例如下, 这是 array
+    [
+        [0, 9, 0, 0],
+        [0, 0, 9, 0],
+        [9, 0, 9, 0],
+        [0, 9, 0, 0],
+    ]
 
-        这是标记后的结果
-        [
-            [1, 9, 2, 1],
-            [2, 4, 9, 2],
-            [9, 4, 9, 2],
-            [2, 9, 2, 1],
-        ]
+    这是标记后的结果
+    [
+        [1, 9, 2, 1],
+        [2, 4, 9, 2],
+        [9, 4, 9, 2],
+        [2, 9, 2, 1],
+    ]
 
-        规则是, 0 会被设置为四周 8 个元素中 9 的数量
-        */
-        var arr = array.slice(0)
-        for (var i = 0; i < array.length; i++) {
-            for (var j = 0; j < array[i].length; j++) {
-                if (array[i][j] === 0) {
-                    // console.log('array[i][j] === 0', `i = ${i} j =${j}`);
-                    var score = 0
-                    for (var m = -1; m <= 1; m++) {
-                        for (var n = -1; n <= 1; n++) {
-                            if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
-                                continue
-                            } else {
-                                // console.log('array[i + m][j + n] = ', `${array[i + m][j + n]} ; i + m =${i+m} j + n = ${j+ n}`);
-                                if (array[i + m][j + n] === 9) {
-                                    score++
-                                }
+    规则是, 0 会被设置为四周 8 个元素中 9 的数量
+    */
+    var arr = array.slice(0)
+    for (var i = 0; i < array.length; i++) {
+        for (var j = 0; j < array[i].length; j++) {
+            if (array[i][j] === 0) {
+                // console.log('array[i][j] === 0', `i = ${i} j =${j}`);
+                var score = 0
+                for (var m = -1; m <= 1; m++) {
+                    for (var n = -1; n <= 1; n++) {
+                        if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
+                            continue
+                        } else {
+                            // console.log('array[i + m][j + n] = ', `${array[i + m][j + n]} ; i + m =${i+m} j + n = ${j+ n}`);
+                            if (array[i + m][j + n] === 9) {
+                                score++
                             }
                         }
                     }
-                    arr[i][j] = score
-                        // console.log(arr);
                 }
+                arr[i][j] = score
+                // console.log(arr);
             }
         }
-        return arr
     }
-    //生成随机棋盘
+    return arr
+}
+//生成随机棋盘
 function makeRandomLine(buttonId) {
     console.log('makeRandomLine', `buttonId = ${buttonId}`);
     switch (buttonId) {
         case "id-button-primary":
             var arr = randomLine(8, 8, 10)
             gVar.wholeMine = 10
+            gVar.level = 0
             break;
         case "id-button-middle":
             var arr = randomLine(16, 16, 48)
             gVar.wholeMine = 48
+            gVar.level = 1
             break;
         case "id-button-high":
             var arr = randomLine(30, 16, 99)
             gVar.wholeMine = 99
+            gVar.level = 2
             break;
         default:
             console.log('makeRandomLine false');
@@ -508,21 +516,21 @@ var buttonTemplate = function(title, index) {
 
 var GuaActions = function(title, actions, callback) {
     e('#unFind-mines-number').classList.add('hide')
-        /*
-        title 是 string
-        actions 是一个包含 string 的数组
-        callback 是一个如下的函数
-        function(index) {
-            // index 是下标, 具体如下
-            // index 如果是 -1 表明用户点击了 cancel
-        }
+    /*
+    title 是 string
+    actions 是一个包含 string 的数组
+    callback 是一个如下的函数
+    function(index) {
+        // index 是下标, 具体如下
+        // index 如果是 -1 表明用户点击了 cancel
+    }
 
-        这个函数生成一个弹窗页面
-        弹窗包含 title 作为标题
-        actions 里面的 string 作为标题生成按钮
-        弹窗还包含一个 Cancel 按钮
-        点击按钮的时候, 调用 callback(index)
-        */
+    这个函数生成一个弹窗页面
+    弹窗包含 title 作为标题
+    actions 里面的 string 作为标题生成按钮
+    弹窗还包含一个 Cancel 按钮
+    点击按钮的时候, 调用 callback(index)
+    */
     var buttons = []
     for (var i = 0; i < actions.length; i++) {
         var a = actions[i]
@@ -546,7 +554,7 @@ var GuaActions = function(title, actions, callback) {
     </div>
     `
     appendHtml(e('body'), t)
-        // css
+    // css
     var css = `
     <style class="modal-remove">
         .modal-container {
@@ -601,7 +609,7 @@ var GuaActions = function(title, actions, callback) {
     </style>
     `
     appendHtml(e('head'), css)
-        // event
+    // event
     bindAll('.modal-action-button', 'click', function(event) {
         console.log('click button')
         var index = event.target.dataset.index
@@ -620,9 +628,9 @@ function draw() {
     }
 
     let context = canvas.getContext("2d")
-        //实践表明在不设施fillStyle下的默认fillStyle=black
+    //实践表明在不设施fillStyle下的默认fillStyle=black
     context.fillRect(0, 0, 100, 100)
-        //实践表明在不设施strokeStyle下的默认strokeStyle=black
+    //实践表明在不设施strokeStyle下的默认strokeStyle=black
     context.strokeRect(120, 0, 100, 100)
 
     //设置纯色
@@ -670,6 +678,43 @@ var bindButtonReplay = function() {
     })
 }
 
+//显示最短用时
+var showMaxScore = function(score) {
+    switch (gVar.level) {
+        case 0:
+            if (true) {
+                let bestScore = getBestScore(0)
+                return score > bestScore ? bestScore : score
+            }
+            break;
+        case 1:
+
+            break;
+        case 2:
+
+            break;
+        default:
+            console.log('showMaxScore error');
+    }
+}
+
+var getBestScore = function(level) {
+    var time = load()[level]
+    console.log(time)
+    return time
+}
+
+// 定义一个函数， 用于把 数组 写入 localStorage
+var save = function(array) {
+    var s = JSON.stringify(array)
+    localStorage.bestScore = s
+}
+
+// 定义一个函数， 读取 localStorage 中的数据并解析返回
+var load = function() {
+    var s = localStorage.bestScore
+    return JSON.parse(s)
+}
 // window.ontouchstart = function(e) {
 //     e.preventDefault();
 // }
