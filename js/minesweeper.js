@@ -197,6 +197,10 @@ function rightClick() {
 function check() {
     console.log('check');
     bindAll('.mine', 'click', (event) => {
+        console.log('check event.target.classList:', event.target.classList);
+        if (event.target.classList.contains('mineMayBe')) {
+            return
+        }
         console.log('check', `event.target.innerHTML = ${event.target.innerHTML}`)
         console.log('check', `event.target.data.x = ${event.target.dataset.locationx}`)
         console.log('check', `event.target.data.y = ${event.target.dataset.locationy}`)
@@ -400,14 +404,12 @@ var markedSquare = function(array) {
     for (var i = 0; i < array.length; i++) {
         for (var j = 0; j < array[i].length; j++) {
             if (array[i][j] === 0) {
-                // console.log('array[i][j] === 0', `i = ${i} j =${j}`);
                 var score = 0
                 for (var m = -1; m <= 1; m++) {
                     for (var n = -1; n <= 1; n++) {
                         if ((i + m) < 0 || (j + n) < 0 || (i + m) >= array.length || (j + n) > array[i].length) {
                             continue
                         } else {
-                            // console.log('array[i + m][j + n] = ', `${array[i + m][j + n]} ; i + m =${i+m} j + n = ${j+ n}`);
                             if (array[i + m][j + n] === 9) {
                                 score++
                             }
@@ -415,7 +417,6 @@ var markedSquare = function(array) {
                     }
                 }
                 arr[i][j] = score
-                // console.log(arr);
             }
         }
     }
