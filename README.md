@@ -2,7 +2,12 @@
 
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/img/Minesweeper.gif)
 
-## 1.3
+## 1.4新增
+
+- 新增历史最佳
+
+
+## 1.3新增
 
 1. 增加手机适配
 2. 增加背景图片
