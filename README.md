@@ -1,7 +1,11 @@
 # Minesweeper
 
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/img/Minesweeper.gif)
+![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-03-24%2010.30.51.png)
 
+## 1.5新增
+
+- 排行榜
 ## 1.4新增
 
 - 新增历史最佳
