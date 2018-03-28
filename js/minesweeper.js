@@ -775,7 +775,7 @@ var rankAll = function() {
     // }
     var request = {
         method: 'get',
-        url: 'http://123.206.211.237:8081/game/minesweeper/all',
+        url: '/game/minesweeper/all',
         contentType: 'application/json',
         callback: function(response) {
             //console.log('响应', response)
@@ -832,7 +832,7 @@ var rankNew = function(form) {
     var data = JSON.stringify(form)
     var request = {
         method: 'POST',
-        url: 'http://123.206.211.237:8081/game/minesweeper/add',
+        url: '/game/minesweeper/add',
         data: data,
         contentType: 'application/json',
         callback: function(response) {
