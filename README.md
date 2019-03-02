@@ -1,5 +1,5 @@
 # Minesweeper
-[点击开始游戏](http://taoer.info/Minesweeper/index.html)
+[点击开始游戏](http://140.143.200.171:8081/Minesweeper/)
 
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/img/Minesweeper.gif)
 ![image](https://raw.githubusercontent.com/e174596549/Minesweeper/master/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-03-24%2010.30.51.png)
